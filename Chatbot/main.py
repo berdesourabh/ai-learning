@@ -1,17 +1,19 @@
 from langchain.prompts import MessagesPlaceholder, HumanMessagePromptTemplate, ChatPromptTemplate
-from langchain.memory import ConversationBufferMemory, FileChatMessageHistory
+from langchain.memory import ConversationSummaryMemory, FileChatMessageHistory
 from langchain_openai import ChatOpenAI
 from langchain.chains import LLMChain
 from dotenv import load_dotenv
 
 load_dotenv()
 
-chat = ChatOpenAI()
+chat = ChatOpenAI(verbose=True)
 
-memory = ConversationBufferMemory(
+memory = ConversationSummaryMemory(
     memory_key="messages", 
     return_messages=True,
-    chat_memory=FileChatMessageHistory("messages.json"))
+    #chat_memory=FileChatMessageHistory("messages.json"))
+    llm=chat
+)
 
 prompt = ChatPromptTemplate(
     input_variables=["content", "messages"],
@@ -24,7 +26,8 @@ prompt = ChatPromptTemplate(
 chain = LLMChain(
     llm=chat,
     prompt=prompt,
-    memory=memory
+    memory=memory,
+    verbose=True
 )
 
 while True:
